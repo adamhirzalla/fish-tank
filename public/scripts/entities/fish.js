@@ -5,14 +5,13 @@ class Fish extends Denizen {
     this.imageUri = '/images/fish01.png';
     this.maxSwimSpeed = 100;
     this.makeNewVelocity();
-    this.isTasty = true;
   }
 
   generateSwimVelocity(max, min) {
     if (min && min > max) {
       min = 0;
     }
-    var newSpeed = new Vector(randRangeInt(-max, max), randRangeInt(-max / 2, max / 2));
+    let newSpeed = new Vector(randRangeInt(-max, max), randRangeInt(-max / 2, max / 2));
     while (min && newSpeed.magnitude() < min) {
       newSpeed = new Vector(randRangeInt(-max, max), randRangeInt(-max / 2, max / 2));
     }
@@ -20,7 +19,7 @@ class Fish extends Denizen {
   }
 
   updateOneTick() {
-    var delta = this.swimVelocity.scale(PHYSICS_TICK_SIZE_S);
+    let delta = this.swimVelocity.scale(PHYSICS_TICK_SIZE_S);
     this.position.addMut(delta);
     this.timeUntilSpeedChange -= PHYSICS_TICK_SIZE_S;
     if (this.timeUntilSpeedChange < 0) {
@@ -33,5 +32,19 @@ class Fish extends Denizen {
     this.timeUntilSpeedChange = randRangeInt(5);
   }
 
+  update(t, denizens) {
+    for (let id in denizens) {
+      const [x1, y1] = [this.position.x, this.position.y];
+      const [x2, y2] = [denizens[id].position.x, denizens[id].position.y];
+      if (denizens[id].isTasty && this.level > denizens[id].level &&
+          Math.abs(x2 - x1) <= 40 && Math.abs(y2 - y1) <= 40) {
+        if (x1 !== x2 && y1 !== y2) {
+          console.log(`${this.name} (id: ${this.id}) ate ${denizens[id].name} (id: ${denizens[id].id})`);
+          denizens[id].kill();
+        }
+      }
+    }
+    super.update(t, denizens);
+  }
 }
 

@@ -1,10 +1,10 @@
-var express = require('express');
+let express = require('express');
 
 
-var PORT = process.env.PORT || 8080
+let PORT = process.env.PORT || 8080;
 
 
-var app = express();
+let app = express();
 
 app.use(express.static('public'));
 
